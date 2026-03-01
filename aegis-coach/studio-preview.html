@@ -1,0 +1,799 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aegis Coach Studio Preview</title>
+    <style>
+      :root {
+        --bg: #090d1c;
+        --panel: rgba(16, 20, 39, 0.92);
+        --panel-soft: rgba(255, 255, 255, 0.04);
+        --line: rgba(255, 255, 255, 0.1);
+        --text: #f7f7f8;
+        --muted: #b8bbc4;
+        --accent: #3b82f6;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        color: var(--text);
+        font-family:
+          "Plus Jakarta Sans",
+          ui-sans-serif,
+          system-ui,
+          -apple-system,
+          BlinkMacSystemFont,
+          "Segoe UI",
+          sans-serif;
+        background:
+          radial-gradient(circle at top center, rgba(59, 130, 246, 0.12), transparent 32%),
+          linear-gradient(180deg, #111527 0%, #090d1c 48%, #070a15 100%);
+      }
+
+      a {
+        color: inherit;
+        text-decoration: none;
+      }
+
+      button,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 2px;
+      }
+
+      .page {
+        max-width: 1440px;
+        margin: 0 auto;
+        padding: 24px;
+      }
+
+      .shell {
+        border: 1px solid rgba(111, 120, 170, 0.22);
+        border-radius: 24px;
+        padding: 20px;
+        background:
+          radial-gradient(circle at 50% 8%, rgba(59, 130, 246, 0.08), transparent 18%),
+          linear-gradient(180deg, rgba(12, 15, 36, 0.98) 0%, rgba(8, 11, 24, 0.98) 100%);
+        box-shadow:
+          0 24px 64px rgba(5, 8, 25, 0.4),
+          0 8px 24px rgba(5, 8, 25, 0.24);
+      }
+
+      .nav,
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--panel);
+      }
+
+      .nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 12px 16px;
+      }
+
+      .nav-left,
+      .nav-right,
+      .nav-links,
+      .row,
+      .chip-row,
+      .tab-row {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .nav-links {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .logo,
+      .avatar {
+        display: grid;
+        place-items: center;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      .logo {
+        width: 48px;
+        height: 48px;
+        font-weight: 700;
+      }
+
+      .avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 700;
+      }
+
+      .pill,
+      .tab,
+      .toggle {
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.04);
+        color: var(--text);
+      }
+
+      .pill {
+        font-size: 13px;
+      }
+
+      .content {
+        margin-top: 24px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.12fr) 420px;
+        gap: 24px;
+      }
+
+      .left,
+      .right {
+        display: grid;
+        gap: 16px;
+      }
+
+      .card {
+        padding: 20px;
+      }
+
+      .eyebrow {
+        margin: 0;
+        color: #c9d0e9;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        margin-top: 10px;
+        font-size: clamp(28px, 3vw, 36px);
+        line-height: 1.15;
+        letter-spacing: -0.03em;
+      }
+
+      p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .composer {
+        margin-top: 18px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      textarea {
+        width: 100%;
+        min-height: 112px;
+        resize: vertical;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 14px 16px;
+        color: var(--text);
+        background: rgba(255, 255, 255, 0.02);
+        font-size: 16px;
+        line-height: 1.6;
+      }
+
+      .composer-footer {
+        margin-top: 14px;
+        display: flex;
+        align-items: flex-end;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      .chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        padding: 8px 12px;
+        background: rgba(255, 255, 255, 0.04);
+        font-size: 12px;
+      }
+
+      .switch {
+        position: relative;
+        width: 42px;
+        height: 22px;
+        border-radius: 999px;
+        border: 1px solid var(--line);
+        background: var(--accent);
+      }
+
+      .switch::after {
+        content: "";
+        position: absolute;
+        top: 1px;
+        left: 21px;
+        width: 18px;
+        height: 18px;
+        border-radius: 999px;
+        background: #fff;
+      }
+
+      .primary {
+        border: 0;
+        border-radius: 12px;
+        padding: 11px 18px;
+        background: #fff;
+        color: #090d1c;
+        font-weight: 700;
+      }
+
+      .secondary {
+        border-radius: 12px;
+        padding: 11px 18px;
+        background: transparent;
+      }
+
+      .quick-grid,
+      .pattern-grid,
+      .preview-grid,
+      .support-grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .quick-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .pattern-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .support-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .preview-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .mini {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        background: var(--panel-soft);
+      }
+
+      .label {
+        margin-bottom: 10px;
+        color: #c9d0e9;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .proposal {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        background: var(--panel-soft);
+      }
+
+      .proposal-top,
+      .section-head,
+      .output-head,
+      .audit {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+      }
+
+      .risk {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .risk.high {
+        color: #fecaca;
+        background: rgba(239, 68, 68, 0.12);
+      }
+
+      .risk.medium {
+        color: #fde68a;
+        background: rgba(245, 158, 11, 0.12);
+      }
+
+      .tab-row {
+        margin-top: 18px;
+        flex-wrap: wrap;
+        gap: 8px;
+        padding: 6px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .tab {
+        background: transparent;
+        color: var(--muted);
+        font-weight: 700;
+      }
+
+      .tab.active {
+        background: #fff;
+        color: #090d1c;
+      }
+
+      .drawer {
+        display: none;
+        margin-top: 16px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+
+      .drawer.open {
+        display: block;
+      }
+
+      .tab-panel {
+        margin-top: 16px;
+      }
+
+      .tab-panel.hidden,
+      .preview.hidden,
+      .hidden {
+        display: none;
+      }
+
+      .empty {
+        border: 1px dashed var(--line);
+        border-radius: 16px;
+        padding: 16px;
+        color: var(--muted);
+      }
+
+      .code {
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        white-space: pre-wrap;
+        background: #080c1a;
+        color: #cbd5e1;
+        font-family:
+          ui-monospace,
+          SFMono-Regular,
+          Menlo,
+          Monaco,
+          Consolas,
+          "Liberation Mono",
+          monospace;
+        font-size: 12px;
+        line-height: 1.7;
+      }
+
+      @media (max-width: 1200px) {
+        .content {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 900px) {
+        .nav {
+          flex-direction: column;
+          align-items: stretch;
+        }
+
+        .nav-left,
+        .nav-right {
+          justify-content: space-between;
+        }
+
+        .nav-links,
+        .quick-grid,
+        .pattern-grid,
+        .preview-grid,
+        .support-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .page {
+          padding: 16px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page">
+      <section class="shell">
+        <div class="nav">
+          <div class="nav-left">
+            <div class="logo">A</div>
+            <div class="nav-links">
+              <a href="#">Studio</a>
+              <a href="#">Patterns</a>
+              <a href="#">Guardrails</a>
+              <a href="#">Docs</a>
+            </div>
+          </div>
+          <div class="nav-right">
+            <button class="pill">My Workspace</button>
+            <button class="pill">History</button>
+            <div class="avatar">TS</div>
+          </div>
+        </div>
+
+        <div class="content">
+          <section class="left">
+            <div class="card">
+              <div class="eyebrow">Aegis Studio</div>
+              <h1>Design safe security chat flows with guardrails and citations.</h1>
+              <p style="margin-top: 12px">
+                Draft the workflow, generate recommendations, and keep evidence
+                available as supporting material instead of crowding the main
+                decision path.
+              </p>
+
+              <div class="composer">
+                <textarea id="prompt" placeholder="Describe the security AI chat workflow you want to design...">I need a security AI assistant that can suggest remediation and run playbooks.</textarea>
+                <div class="composer-footer">
+                  <div class="chip-row">
+                    <div class="chip">
+                      <span>Evidence Mode</span>
+                      <button class="switch" id="evidence-switch" aria-label="Evidence mode toggle"></button>
+                    </div>
+                    <button class="pill">Scope: Read-only draft</button>
+                    <span style="color: var(--muted); font-size: 12px; font-weight: 600">Model Aurora 1.4</span>
+                  </div>
+                  <button class="primary" id="generate">Generate</button>
+                </div>
+              </div>
+
+              <div class="quick-grid" style="margin-top: 16px">
+                <button class="pill quick">Design confirm wizard</button>
+                <button class="pill quick">Switch vs radio for policy scope</button>
+                <button class="pill quick">Add safe defaults</button>
+                <button class="pill quick">Write engineer argument</button>
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="section-head">
+                <div class="eyebrow">Pattern Starters</div>
+                <span style="color: var(--muted); font-size: 12px">Optional shortcuts</span>
+              </div>
+              <div class="pattern-grid" style="margin-top: 14px">
+                <div class="mini">
+                  <strong>Chat + Actions</strong>
+                  <p style="margin-top: 6px">Use proposal cards and require confirmation before execution.</p>
+                </div>
+                <div class="mini">
+                  <strong>Confirm Wizard</strong>
+                  <p style="margin-top: 6px">Review scope, impact, and an audit note in one controlled flow.</p>
+                </div>
+                <div class="mini">
+                  <strong>Policy Editor</strong>
+                  <p style="margin-top: 6px">Keep scope and approval settings visible while drafting.</p>
+                </div>
+                <div class="mini">
+                  <strong>Evidence Drawer</strong>
+                  <p style="margin-top: 6px">Keep claims and citations separate from the recommendation body.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="card preview hidden" id="preview-card">
+              <div class="label">Preview</div>
+              <h2>Generated Workspace Preview</h2>
+              <div class="preview-grid" style="margin-top: 14px">
+                <div class="proposal">
+                  <div class="proposal-top">
+                    <strong>Policy Update Proposal</strong>
+                    <span class="risk high">High</span>
+                  </div>
+                  <p>
+                    Assistant proposes a policy update, but execution is blocked
+                    until the confirm wizard captures scope, impact, and an audit note.
+                  </p>
+                </div>
+                <div class="proposal">
+                  <div class="proposal-top">
+                    <strong>Playbook Draft</strong>
+                    <span class="risk medium">Medium</span>
+                  </div>
+                  <p>
+                    Assistant drafts a remediation playbook and routes it into the
+                    output rail for recommendation, argument, and spec review.
+                  </p>
+                </div>
+              </div>
+              <div class="mini audit" style="margin-top: 14px">
+                <div>
+                  <strong>Execution remains locked until approval</strong><br />
+                  <span style="color: var(--muted)">Studio policy</span>
+                </div>
+                <span>Pending</span>
+              </div>
+            </div>
+
+            <div class="support-grid">
+              <div class="card">
+                <div class="label">Constraints</div>
+                <h3>Guardrails before generation</h3>
+                <div style="margin-top: 12px; display: grid; gap: 10px">
+                  <div class="mini">Data: Ticket metadata only</div>
+                  <div class="mini">Tools: Read-only proposals</div>
+                  <div class="mini">High impact actions remain review-only until explicit approval.</div>
+                </div>
+              </div>
+
+              <div class="card">
+                <div class="label">Confirm Wizard</div>
+                <h3>Review scope before execution</h3>
+                <div class="mini" style="margin-top: 12px">
+                  Review the proposed action, impacted systems, and required approvals
+                  before anything runs.
+                </div>
+                <div class="row" style="margin-top: 12px; flex-wrap: wrap">
+                  <button class="pill">Request Approval</button>
+                  <button class="pill">Rollback Path</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <aside class="right">
+            <div class="card">
+              <div class="output-head">
+                <div>
+                  <div class="eyebrow">Outputs</div>
+                  <h2 style="margin-top: 8px">Review before build</h2>
+                </div>
+                <button class="toggle" id="evidence-toggle">Open Evidence</button>
+              </div>
+
+              <div class="drawer" id="evidence-drawer">
+                <div class="mini">
+                  <strong>OWASP LLM Top 10</strong>
+                  <p style="margin-top: 6px">
+                    Prompt injection and insecure output handling are reduced when
+                    model output is reviewed before tool execution.
+                  </p>
+                </div>
+                <div class="mini" style="margin-top: 12px">
+                  <strong>WCAG 2.2</strong>
+                  <p style="margin-top: 6px">
+                    Visible focus indicators should remain clear and discernible.
+                  </p>
+                </div>
+              </div>
+
+              <div class="tab-row">
+                <button class="tab active" data-tab="recommendation">Recommendation</button>
+                <button class="tab" data-tab="argument">Argument</button>
+                <button class="tab" data-tab="spec">Spec</button>
+                <button class="tab" data-tab="build">Build</button>
+              </div>
+
+              <div class="tab-panel" id="recommendation">
+                <div class="empty generated-only hidden">
+                  Recommendation output appears here after you generate.
+                </div>
+                <div class="generated-content hidden">
+                  <div class="label">Primary Recommendation</div>
+                  <h3>Chat proposes, UI commits</h3>
+                  <p style="margin-top: 10px">
+                    Keep the assistant in a recommendation role and force approval
+                    in structured UI before any state-changing action.
+                  </p>
+                  <div class="mini" style="margin-top: 12px">
+                    Inline review forms are acceptable for medium-risk actions.
+                    Separate action centers work better when the queue is large.
+                  </div>
+                </div>
+              </div>
+
+              <div class="tab-panel hidden" id="argument">
+                <div class="empty generated-only hidden">
+                  Engineer argument output appears here after you generate.
+                </div>
+                <div class="generated-content hidden">
+                  <div class="mini">
+                    High impact actions should not execute directly from chat. The
+                    assistant can propose actions, but users should confirm scope,
+                    review impact, and leave an audit note before execution.
+                  </div>
+                  <div class="mini" style="margin-top: 12px">Use chat for recommendations, not final execution.</div>
+                  <div class="mini" style="margin-top: 12px">Keep scope visible near the composer and confirm flow.</div>
+                </div>
+              </div>
+
+              <div class="tab-panel hidden" id="spec">
+                <div class="empty generated-only hidden">
+                  Spec output appears here after you generate.
+                </div>
+                <div class="generated-content hidden">
+                  <div class="code">{
+  "version": "0.1.0",
+  "domain": "security-ai-chat",
+  "screens": [
+    {
+      "id": "studio",
+      "sections": ["left-workflow", "output-rail"]
+    }
+  ],
+  "constraints": [
+    "Do not auto-build from the composer.",
+    "Require confirmation for high impact actions."
+  ]
+}</div>
+                </div>
+              </div>
+
+              <div class="tab-panel hidden" id="build">
+                <div class="mini">
+                  Build stays locked until the spec is approved. This keeps the app
+                  aligned with the coach-first workflow.
+                </div>
+                <div class="row" style="margin-top: 12px; flex-wrap: wrap">
+                  <button class="pill" id="approve">Approve Spec</button>
+                  <button class="pill" id="build-files" style="opacity: 0.5" disabled>Build Files</button>
+                </div>
+                <div class="hidden" id="build-output" style="margin-top: 16px"></div>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script>
+      const tabs = document.querySelectorAll(".tab");
+      const panels = document.querySelectorAll(".tab-panel");
+      const quickButtons = document.querySelectorAll(".quick");
+      const prompt = document.getElementById("prompt");
+      const generate = document.getElementById("generate");
+      const previewCard = document.getElementById("preview-card");
+      const generatedOnly = document.querySelectorAll(".generated-only");
+      const generatedContent = document.querySelectorAll(".generated-content");
+      const evidenceToggle = document.getElementById("evidence-toggle");
+      const evidenceDrawer = document.getElementById("evidence-drawer");
+      const evidenceSwitch = document.getElementById("evidence-switch");
+      const approve = document.getElementById("approve");
+      const buildFiles = document.getElementById("build-files");
+      const buildOutput = document.getElementById("build-output");
+
+      let evidenceOpen = false;
+      let evidenceMode = true;
+
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((item) => item.classList.remove("active"));
+          panels.forEach((panel) => panel.classList.add("hidden"));
+          tab.classList.add("active");
+          document.getElementById(tab.dataset.tab).classList.remove("hidden");
+        });
+      });
+
+      quickButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          prompt.value = button.textContent;
+        });
+      });
+
+      evidenceToggle.addEventListener("click", () => {
+        evidenceOpen = !evidenceOpen;
+        evidenceDrawer.classList.toggle("open", evidenceOpen);
+        evidenceToggle.textContent = evidenceOpen ? "Hide Evidence" : "Open Evidence";
+      });
+
+      evidenceSwitch.addEventListener("click", () => {
+        evidenceMode = !evidenceMode;
+        evidenceSwitch.style.background = evidenceMode ? "var(--accent)" : "rgba(255, 255, 255, 0.08)";
+        evidenceDrawer.innerHTML = evidenceMode
+          ? `
+            <div class="mini">
+              <strong>OWASP LLM Top 10</strong>
+              <p style="margin-top: 6px">
+                Prompt injection and insecure output handling are reduced when
+                model output is reviewed before tool execution.
+              </p>
+            </div>
+            <div class="mini" style="margin-top: 12px">
+              <strong>WCAG 2.2</strong>
+              <p style="margin-top: 6px">
+                Visible focus indicators should remain clear and discernible.
+              </p>
+            </div>
+          `
+          : `
+            <div class="mini">
+              <strong>Evidence mode is off.</strong>
+              <p style="margin-top: 6px">
+                Generate still works, but no citations are retrieved for the supporting drawer.
+              </p>
+            </div>
+          `;
+      });
+
+      generate.addEventListener("click", () => {
+        previewCard.classList.remove("hidden");
+        generatedOnly.forEach((node) => node.classList.add("hidden"));
+        generatedContent.forEach((node) => node.classList.remove("hidden"));
+      });
+
+      approve.addEventListener("click", () => {
+        approve.textContent = "Spec Approved";
+        buildFiles.disabled = false;
+        buildFiles.style.opacity = "1";
+      });
+
+      buildFiles.addEventListener("click", () => {
+        buildOutput.classList.remove("hidden");
+        buildOutput.innerHTML = `
+          <div class="label">Generated Files</div>
+          <div class="mini">
+            <strong>components/aegis/GeneratedPreview.tsx</strong>
+            <pre class="code" style="margin-top: 10px">export function GeneratedPreview() {
+  return (
+    &lt;section&gt;
+      &lt;h2&gt;Aegis Studio&lt;/h2&gt;
+      &lt;p&gt;Review output and confirm high impact actions before build.&lt;/p&gt;
+    &lt;/section&gt;
+  );
+}</pre>
+          </div>
+          <div class="mini" style="margin-top: 12px">
+            <strong>README.generated.md</strong>
+            <pre class="code" style="margin-top: 10px"># Generated Build Output
+
+- Studio shell
+- Output rail
+- Confirmation required before execution</pre>
+          </div>
+        `;
+      });
+    </script>
+  </body>
+</html>
